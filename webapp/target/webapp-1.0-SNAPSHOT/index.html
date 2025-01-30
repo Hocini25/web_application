@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"> <!-- تعيين اتجاه النص من اليمين لليسار -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LA BIBIOTHEQUE</title>
+    <!-- إضافة Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- إضافة خط Cairo من Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <!-- إضافة Animate.css للحركات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: url('download.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+        .form-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9); /* خلفية شبه شفافة */
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* ظل جميل */
+            animation: fadeInUp 1s ease-in-out; /* حركة ظهور */
+        }
+        .form-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+        .form-container label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .form-container .form-control {
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+        .form-container .form-control:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 10px rgba(106, 17, 203, 0.5);
+        }
+        .form-container .btn-primary {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.1em;
+            background: linear-gradient(135deg, #6a11cb, #2575fc); /* زر متدرج */
+            border: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .form-container .btn-primary:hover {
+            transform: translateY(-3px); /* حركة عند التحويم */
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+        }
+        #errorMessage {
+            color: #ff4d4d;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+            animation: shake 0.5s ease-in-out; /* حركة اهتزاز للخطأ */
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            50% {
+                transform: translateX(10px);
+            }
+            75% {
+                transform: translateX(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container animate__animated animate__fadeInUp">
+        <h1>مكتبة </h1>
+        <form id="loginForm">
+            <div class="mb-3">
+                <label for="name" class="form-label">الاسم:</label>
+                <input type="text" class="form-control" id="name" name="name" >
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">البريد الإلكتروني:</label>
+                <input type="email" class="form-control" id="email" name="email" >
+            </div>
+            <button type="submit" class="btn btn-primary">تسجيل الدخول</button>
+        </form>
+        <!-- مكان عرض رسالة الخطأ -->
+        <div id="errorMessage"></div>
+    </div>
+
+    <!-- إضافة Bootstrap JS (مطلوب للمكونات التفاعلية) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // منع إعادة تحميل الصفحة
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+
+            // إرسال البيانات إلى test.jsp باستخدام fetch
+            fetch('test.jsp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                },
+                body: `name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`,
+            })
+                .then(response => response.json()) // تحويل الرد إلى JSON
+                .then(data => {
+                    if (data.success) {
+                        // إذا كانت البيانات صحيحة، انتقل إلى الصفحة الجديدة
+                        window.location.href = 'success.jsp';
+                    } else {
+                        // إذا كانت البيانات خاطئة، عرض رسالة الخطأ
+                        const errorMessage = document.getElementById('errorMessage');
+                        errorMessage.innerText = data.message;
+                        errorMessage.style.display = 'block';
+                        errorMessage.classList.add('animate__animated', 'animate__shakeX'); // إضافة حركة اهتزاز
+                        setTimeout(() => {
+                            errorMessage.classList.remove('animate__animated', 'animate__shakeX');
+                        }, 500); // إزالة الحركة بعد 500ms
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</body>
+</html>
